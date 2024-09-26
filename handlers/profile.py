@@ -138,6 +138,7 @@ async def change_name(message: types.Message, state: FSMContext):
 async def update_name(message: types.Message, state: FSMContext):
     logging.info(f"Пользователь изменил имя: {message.text}")
 
+
     # Обновление имени в базе данных
     update_user(message.from_user.id, name=message.text)
 
