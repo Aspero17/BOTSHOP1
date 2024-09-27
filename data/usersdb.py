@@ -3,7 +3,7 @@ import json
 from typing import Optional, List, Dict
 from datetime import datetime
 
-DATABASE_PATH = '/data/users.db'
+DATABASE_PATH = 'data/users.db'
 
 # Функция для создания таблиц пользователей, заказов и корзины
 def create_tables():
