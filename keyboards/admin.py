@@ -1,15 +1,15 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 def get_admin_menu() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
     # Создайте кнопки
-    button_view_products = KeyboardButton("📦 Просмотреть товары")
-    button_edit_products = KeyboardButton("✏️ Изменить товары")
-    button_back = KeyboardButton("🔙 Назад")
+    kb_builder.row(
+        KeyboardButton(text="📦 Просмотреть товары"),
+        KeyboardButton(text="✏️ Изменить товары"),
+    )
 
-    # Создайте клавиатуру
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True).row(
-        button_view_products,
-        button_edit_products,
-    ).add(button_back)
+    kb_builder.add(KeyboardButton(text="🔙 Назад"))
 
-    return keyboard
+    return kb_builder.as_markup(resize_keyboard=True)
