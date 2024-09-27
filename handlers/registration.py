@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from keyboards.main import get_main_menu
 from data.usersdb import is_user_registered, add_user, update_user
 from keyboards.admin import get_admin_menu  # Импортируем клавиатуру админ панели
-from handlers.admin import router as admin_router  # Импортируем маршруты админ панели
+
 router = Router()
 
 class Registration(StatesGroup):
