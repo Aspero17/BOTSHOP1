@@ -25,6 +25,20 @@ MANUFACTURER_DESCRIPTIONS = {
     # Добавьте описания для других производителей
 }
 
+MANUFACTURER_IMAGES = {
+    "Бавлинский мельничный комбинат ТАТАРСТАН": "photo/pshenichnaya.jpg",
+    "Казахская мука": "photo/granum.jpg",
+    "Мука МАКФА": "photo/makfa.jpg",
+    "Предпортовый мельничный комбинат": "photo/predportovaya.jpg",
+    "Бутурлиновский мельничный комбинат": "photo/buturlinovskij.jpg",
+    "Мельничный комбинат имени Кирова": "photo/melnichnaya.jpg",
+    "Павло-Пассадский мельничный комбинат": "photo/ekopekar.jpg"
+}
+
+def get_manufacturer_image(manufacturer_name: str) -> str:
+    """Возвращает путь к изображению для заданного производителя."""
+    return MANUFACTURER_IMAGES.get(manufacturer_name, "photo/Мука.png")
+
 def get_category_description(category_name: str) -> str:
     """Возвращает описание для заданной категории."""
     return CATEGORY_DESCRIPTIONS.get(category_name, "Описание для этой категории отсутствует.")
