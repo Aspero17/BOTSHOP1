@@ -7,7 +7,7 @@ from utils.db import get_categories, get_manufacturers_by_category, get_products
 
 router = Router()
 
-@router.message(Command("/adminpanelspb"))
+@router.message(Command("adminpanelspb"))
 async def admin_panel_handler(message: types.Message):
     if message.from_user.id == 730393028:  # Замените на ваш настоящий ID администратора
         await message.answer("Добро пожаловать в админ панель!")
