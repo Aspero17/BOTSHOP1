@@ -14,7 +14,7 @@ class AdminStates(StatesGroup):
     selecting_manufacturer = State()
     editing_manufacturer_name = State()
 
-DB_PATH = "data/products.db"
+DB_PATH = "/data/products.db"
 
 # Функция для подключения к базе данных
 def get_db_connection():
