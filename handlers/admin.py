@@ -8,8 +8,9 @@ from utils.db import get_categories, get_manufacturers_by_category, get_products
 router = Router()
 
 @router.message(Command("/adminpanelspb"))
-async def admin_panel_handler(message: types.Message):
+async def admin_panel_handler(message: types.Message, state: FSMContext):
     if message.from_user.id == 730393028:  # Замените на ваш настоящий ID администратора
+        await state.clear()  # Сброс состояния перед входом в админ панель
         await message.answer("Добро пожаловать в админ панель!")
     else:
         await message.answer("У вас нет доступа к админ панели.")

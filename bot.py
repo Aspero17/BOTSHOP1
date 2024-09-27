@@ -25,8 +25,6 @@ dp.include_router(general.router)  # Обработчик для общих ко
 
 dp.include_router(editcart.router)
 dp.include_router(cart.router)
-
-# Регистрация маршрутов
 dp.include_router(admin.router)
 
 # Инициализация базы данных
