@@ -151,10 +151,11 @@ def format_order_history(user_id: int) -> str:
 
     for entry in history:
         # Добавляем отступ и улучшаем форматирование
+        details_formatted = entry['details'].replace('\n', '\n   ')
         formatted_entry = (
             f"🗓️ **Дата и время:** {entry['time']}\n"
             f"📜 **Детали заказа:**\n"
-            f"   {entry['details'].replace('\n', '\n   ')}\n"  # Отступ для деталей заказа
+            f"   {details_formatted}\n"  # Отступ для деталей заказа
             f"{'⭐' * 13}\n"  # Разделитель между записями
         )
         # Добавляем запись в начало списка, чтобы новые заказы были внизу
@@ -169,7 +170,6 @@ def format_order_history(user_id: int) -> str:
         f"{'═' * 13}\n"  # Линия заголовка
         f"{formatted_history}"
     )
-
 
 @router.message(F.text)
 async def handle_all_buttons(message: types.Message, state: FSMContext):
