@@ -4,6 +4,7 @@ from aiogram import types, Router
 from aiogram.fsm.context import FSMContext
 from keyboards.admin import get_admin_menu
 from aiogram.fsm.state import StatesGroup, State
+from aiogram.filters import Command
 
 router = Router()
 
@@ -74,6 +75,12 @@ async def check_admin_state(state: FSMContext):
         logger.warning("Пользователь не в админ панели.")
         return False
     return True
+
+# Обработчик команды /adminpanelspb
+@router.message(Command(commands=["adminpanelspb"]))
+async def admin_panel_command(message: types.Message, state: FSMContext):
+    logging.info(f"Пользователь {message.from_user.id} вызвал /adminpanelspb.")
+    await message.answer("Добро пожаловать в админ панель!", reply_markup=get_admin_menu())
 
 # Обработчик для просмотра всех товаров
 @router.message(lambda message: message.text == "📦 Просмотреть товары")

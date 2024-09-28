@@ -66,12 +66,12 @@ async def process_address(message: types.Message, state: FSMContext):
     await state.clear()
 
 # Обработчик команды /adminpanelspb
-@router.message(Command("adminpanelspb"))
-async def admin_panel_handler(message: types.Message, state: FSMContext):
-    admin_id = 730393028  # Замените на ваш настоящий ID администратора
+#@router.message(Command("adminpanelspb"))
+#async def admin_panel_handler(message: types.Message, state: FSMContext):
+  #  admin_id = 730393028  # Замените на ваш настоящий ID администратора
 
-    if message.from_user.id == admin_id:
-        await state.clear()
-        await message.answer("Добро пожаловать в админ панель!", reply_markup=get_admin_menu())
-    else:
-        await message.answer("У вас нет доступа к админ панели.")
+   # if message.from_user.id == admin_id:
+  #      await state.clear()
+  #      await message.answer("Добро пожаловать в админ панель!", reply_markup=get_admin_menu())
+ #   else:
+  #      await message.answer("У вас нет доступа к админ панели.")
