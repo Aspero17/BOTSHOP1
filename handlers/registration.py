@@ -1,11 +1,10 @@
+from keyboards.main import get_main_menu
+from data.usersdb import is_user_registered, add_user, update_user
 import logging
 from aiogram import types, Router
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.state import StatesGroup, State
 from aiogram.filters import Command
-from keyboards.main import get_main_menu
-from data.usersdb import is_user_registered, add_user, update_user
-from keyboards.admin import get_admin_menu  # Импортируем клавиатуру админ панели
 
 router = Router()
 
@@ -64,14 +63,3 @@ async def process_address(message: types.Message, state: FSMContext):
         logging.error(f"Ошибка при создании клавиатуры: {e}")
 
     await state.clear()
-
-# Обработчик команды /adminpanelspb
-#@router.message(Command("adminpanelspb"))
-#async def admin_panel_handler(message: types.Message, state: FSMContext):
-  #  admin_id = 730393028  # Замените на ваш настоящий ID администратора
-
-   # if message.from_user.id == admin_id:
-  #      await state.clear()
-  #      await message.answer("Добро пожаловать в админ панель!", reply_markup=get_admin_menu())
- #   else:
-  #      await message.answer("У вас нет доступа к админ панели.")

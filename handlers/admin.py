@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from keyboards.admin import get_admin_menu
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.filters import Command
+from functools import wraps
 
 router = Router()
 
@@ -76,25 +77,54 @@ async def check_admin_state(state: FSMContext):
         return False
     return True
 
+
+# Список администраторов по user_id
+ADMINS = [730393028, 987654321]  # Здесь добавь свой user_id и других админов
+
+# Функция для проверки, является ли пользователь администратором
+def is_admin(user_id: int) -> bool:
+    return user_id in ADMINS
+
+# Декоратор для проверки прав администратора
+def admin_only(handler):
+    @wraps(handler)
+    async def wrapper(message: types.Message, state: FSMContext, *args, **kwargs):
+        if not is_admin(message.from_user.id):
+            logging.warning(f"Пользователь {message.from_user.id} пытался получить доступ к админ функции.")
+            return await message.answer("У вас нет доступа к этой функции.")
+        return await handler(message, state, *args, **kwargs)
+    return wrapper
+
 # Обработчик команды /adminpanelspb
 @router.message(Command(commands=["adminpanelspb"]))
+@admin_only
 async def admin_panel_command(message: types.Message, state: FSMContext):
-    logging.info(f"Пользователь {message.from_user.id} вызвал /adminpanelspb.")
+    logging.info(f"Администратор {message.from_user.id} вошел в админ панель.")
+    await state.set_state("admin_panel")  # Устанавливаем состояние админ панели
     await message.answer("Добро пожаловать в админ панель!", reply_markup=get_admin_menu())
+
+# Проверка на нахождение в админ панели
+async def check_admin_state(state: FSMContext) -> bool:
+    current_state = await state.get_state()
+    return current_state == "admin_panel"
 
 # Обработчик для просмотра всех товаров
 @router.message(lambda message: message.text == "📦 Просмотреть товары")
+@admin_only
 async def view_all_products(message: types.Message, state: FSMContext):
     if not await check_admin_state(state):
-        await message.answer("Пожалуйста, сначала войдите в админ панель.")
-        return
+        return await message.answer("Пожалуйста, сначала войдите в админ панель.")
 
     products = get_all_products()
     if products:
         response = "Список всех товаров:\n"
-        for product in products:
-            response += f"ID: {product[0]}, Название: {product[1]}, Цена: {product[2]} руб.\n"
-        await message.answer(response)
+        chunk_size = 4096 // 100  # приблизительно по 100 символов на товар
+        for i in range(0, len(products), chunk_size):
+            chunk = products[i:i + chunk_size]
+            response = ""
+            for product in chunk:
+                response += f"ID: {product[0]}, Название: {product[1]}, Цена: {product[2]} руб.\n"
+            await message.answer(response)
         logger.info(f"Админ {message.from_user.id} просмотрел все товары.")
     else:
         await message.answer("Товары не найдены.")
@@ -102,38 +132,32 @@ async def view_all_products(message: types.Message, state: FSMContext):
 
 # Обработчик для просмотра всех производителей
 @router.message(lambda message: message.text == "👤 Просмотреть производителей")
+@admin_only
 async def view_all_manufacturers(message: types.Message, state: FSMContext):
-    if not await check_admin_state(state):
-        await message.answer("Пожалуйста, сначала войдите в админ панель.")
-        return
-
     manufacturers = get_all_manufacturers()
     if manufacturers:
         response = "Список всех производителей:\n"
         for manufacturer in manufacturers:
             response += f"ID: {manufacturer[0]}, Название: {manufacturer[1]}\n"
         await message.answer(response)
-        logger.info(f"Админ {message.from_user.id} просмотрел всех производителей.")
+        logging.info(f"Админ {message.from_user.id} просмотрел всех производителей.")
     else:
         await message.answer("Производители не найдены.")
-        logger.info(f"Админ {message.from_user.id} попытался просмотреть производителей, но они не найдены.")
+        logging.info(f"Админ {message.from_user.id} попытался просмотреть производителей, но они не найдены.")
 
 # Обработчик для начала редактирования товара
 @router.message(lambda message: message.text == "✏️ Изменить товар")
+@admin_only
 async def select_product_to_edit(message: types.Message, state: FSMContext):
-    if not await check_admin_state(state):
-        await message.answer("Пожалуйста, сначала войдите в админ панель.")
-        return
-
     await message.answer("Введите ID товара, который хотите изменить:")
     await state.set_state(AdminStates.selecting_product)
-    logger.info(f"Админ {message.from_user.id} начал процесс редактирования товара.")
+    logging.info(f"Админ {message.from_user.id} начал процесс редактирования товара.")
 
 # Обработчик выбора товара для редактирования
 @router.message(AdminStates.selecting_product)
+@admin_only
 async def enter_product_id(message: types.Message, state: FSMContext):
     product_id = message.text
-
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT name, price FROM products WHERE id = ?", (product_id,))
@@ -145,29 +169,31 @@ async def enter_product_id(message: types.Message, state: FSMContext):
         await message.answer(f"Вы выбрали товар:\nНазвание: {product[0]}\nЦена: {product[1]} руб.")
         await message.answer("Введите новое название товара:")
         await state.set_state(AdminStates.editing_product_name)
-        logger.info(f"Админ {message.from_user.id} выбрал товар с ID {product_id} для редактирования.")
+        logging.info(f"Админ {message.from_user.id} выбрал товар с ID {product_id} для редактирования.")
     else:
         await message.answer("Товар с таким ID не найден. Попробуйте снова.")
-        logger.warning(f"Товар с ID {product_id} не найден админом {message.from_user.id}.")
+        logging.warning(f"Товар с ID {product_id} не найден админом {message.from_user.id}.")
 
 # Обработчик изменения названия товара
 @router.message(AdminStates.editing_product_name)
+@admin_only
 async def enter_new_product_name(message: types.Message, state: FSMContext):
     new_name = message.text
     await state.update_data(new_name=new_name)
     await message.answer(f"Новое название товара: {new_name}")
     await message.answer("Теперь введите новую цену товара:")
     await state.set_state(AdminStates.editing_product_price)
-    logger.info(f"Админ {message.from_user.id} изменил название товара на {new_name}.")
+    logging.info(f"Админ {message.from_user.id} изменил название товара на {new_name}.")
 
 # Обработчик изменения цены товара
 @router.message(AdminStates.editing_product_price)
+@admin_only
 async def enter_new_product_price(message: types.Message, state: FSMContext):
     try:
         new_price = float(message.text)
     except ValueError:
         await message.answer("Введите корректное числовое значение для цены.")
-        logger.warning(f"Админ {message.from_user.id} ввел некорректное значение цены: {message.text}.")
+        logging.warning(f"Админ {message.from_user.id} ввел некорректное значение цены: {message.text}.")
         return
 
     user_data = await state.get_data()
@@ -176,7 +202,8 @@ async def enter_new_product_price(message: types.Message, state: FSMContext):
 
     update_product(product_id, new_name, new_price)
     await message.answer(f"Товар успешно обновлен:\nНовое название: {new_name}\nНовая цена: {new_price} руб.")
-    logger.info(f"Админ {message.from_user.id} обновил товар с ID {product_id}. Новое название: {new_name}, новая цена: {new_price} руб.")
+    logging.info(
+        f"Админ {message.from_user.id} обновил товар с ID {product_id}. Новое название: {new_name}, новая цена: {new_price} руб.")
 
     await state.clear()
     await message.answer("Вы вернулись в админ панель.", reply_markup=get_admin_menu())
