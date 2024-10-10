@@ -31,9 +31,9 @@ MANUFACTURER_IMAGES = {
     "Городищенский комбинат хлебопродутов (Старый Оскол)": "photo/buturlinovskij.jpg",
     "Бавлинский мельничный комбинат ТАТАРСТАН": "photo/pshenichnaya.jpg",
     "Казахская мука": "photo/granum.jpg",
+    "Наш пекарь": "photo/nashpekar.jpg",
     "Мука МАКФА": "photo/makfa.jpg",
     "Предпортовый мельничный комбинат": "photo/predportovaya.jpg",
-    "Бутурлиновский мельничный комбинат": "photo/buturlinovskij.jpg",
     "Мельничный комбинат имени Кирова": "photo/melnichnaya.jpg",
     "Павло-Пассадский мельничный комбинат": "photo/ekopekar.jpg"
 }
