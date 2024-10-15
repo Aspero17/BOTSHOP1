@@ -54,7 +54,7 @@ def get_cart_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
 def find_item_id(short_id: str, user_id: int) -> str:
-    """Поиск оригинального идентификатора товара по короткому ID."""
+    """Поиск оригинального идентификатора товара по-короткому ID."""
     for item_id in user_data.get(user_id, {}).get('cart', {}):
         if generate_short_id(item_id) == short_id:
             return item_id

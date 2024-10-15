@@ -34,7 +34,7 @@ MANUFACTURER_IMAGES = {
     "Наш пекарь": "photo/nashpekar.jpg",
     "Мука МАКФА": "photo/makfa.jpg",
     "Предпортовый мельничный комбинат": "photo/predportovaya.jpg",
-    "Мельничный комбинат имени Кирова": "photo/melnichnaya.jpg",
+    "Мельничный комбинат имени Кирова": "photo/Melnichnyj.jpg",
     "Павло-Пассадский мельничный комбинат": "photo/ekopekar.jpg"
 }
 

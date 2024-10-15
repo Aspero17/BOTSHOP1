@@ -26,7 +26,6 @@ dp.include_router(registration.router)  # Обработчик для регис
 dp.include_router(profile.router)  # Обработчик для управления профилем пользователя
 dp.include_router(goods.router)  # Обработчик для работы с товарами
 dp.include_router(general.router)  # Обработчик для общих команд и запросов
-
 dp.include_router(editcart.router)
 dp.include_router(cart.router)
 

@@ -6,7 +6,6 @@ from keyboards.cart import get_cart_keyboard
 from keyboards.main import get_main_menu
 from data.usersdb import initialize_users_db, get_user_info, save_order_to_db, get_order_history_from_db
 from utils.storage import user_data
-from datetime import datetime
 
 router = Router()
 
